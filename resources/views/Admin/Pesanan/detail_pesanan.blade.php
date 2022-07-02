@@ -18,15 +18,19 @@
                                                 <tr>
                                                     <th>Nama Produk</th>
                                                     <th>Kuantitas</th>
+                                                    <th>Satuan</th>
                                                     <th>Harga Produk</th>
                                                     <th>Sub Total</th>
                                                 </tr>
                                             </thead>
+
                                             <tbody>
+
                                                 @foreach ($produk_dipesan as $produk_dipesans)
                                                 <tr>
                                                     <td>{{$produk_dipesans->produk->nama_produk}}</td>
                                                     <td>{{$produk_dipesans->kuantitas}}</td>
+                                                    <td>{{$produk_dipesans->produk->satuan_produk}}</td>
                                                     <td>@currency($produk_dipesans->produk->harga_jual_produk)</td>
                                                     @php
                                                     $sub_total = $produk_dipesans->produk->harga_jual_produk *
@@ -35,6 +39,17 @@
                                                     <td>@currency($sub_total)</td>
                                                 </tr>
                                                 @endforeach
+                                                <tr>
+                                                    <td colspan="4">Ongkir</td>
+                                                    <td>@currency($detail_pesananPelanggan->ongkos_kirim)</td>
+                                                </tr>
+                                                <tr>
+                                                    @php
+                                                    $total_bayar = $sub_total + $detail_pesananPelanggan->ongkos_kirim
+                                                    @endphp
+                                                    <td colspan="4"><b>Total</b></td>
+                                                    <td>@currency($total_bayar)</td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -118,7 +133,8 @@
                                     <button type="submit" class="btn btn-primary btn-block btn-xs" data-toggle="modal"
                                         data-target="#verifikasiPembayaran"><b>Verifikasi Pembayaran</b></button>
                                     @else
-                                    <button class="btn btn-primary btn-block btn-xs" data-toggle="modal" ><b>Pembayaran Telah di Verifikasi</b></button>
+                                    <button class="btn btn-primary btn-block btn-xs" data-toggle="modal"><b>Pembayaran
+                                            Telah di Verifikasi</b></button>
                                     @endif
                                     <form action="{{ route('VerifikasiPembayaran') }}" method="POST">
                                         @csrf
@@ -170,43 +186,46 @@
                     <div class="card-header" style="padding: 0.1rem 1.0rem;">
                         <h4 class="card-title" style="font-size: 14px;">Perbarui Status Pesanan</h4>
                     </div>
-                    
-                        <div class="card card-pricing">
-                            <form action="{{ route('StatusPesananLogs') }}" method="POST">
-                                @csrf
-                                <ul class="specification-list">
-                                    <li>
-                                        <input type="hidden" name="pesanan_id" value="{{ $detail_pesananPelanggan->id }}">
-                                        <select name="pesanan_status" id="pesanan_status" class="form-control">
-                                            <option value="#" selected disabled> -- Pilih Status --</option>
-                                            @if ($detail_pesananPelanggan->status_pesanan == "Pending")
-                                                <option value="Dikemas">Dikemas</option>
-                                            @elseif ($detail_pesananPelanggan->status_pesanan == "Dikemas")
-                                                <option value="Dikirim">Dikirim</option>
-                                            @elseif($detail_pesananPelanggan->status_pesanan == "Dikirim")
-                                                <option value="Terkirim">Terkirim</option>
-                                            @elseif($detail_pesananPelanggan->status_pesanan == "Terkirim")
-                                                <option value="#" selected disabled> -- Selesai --</option>
-                                            @endif
-                                        </select>
-                                            <hr>
-                                            @if ($detail_pesananPelanggan->status_pesanan == "Dikemas")
-                                                <input class="form-control" type="text" name="resi" id="resi" placeholder="Input Nomor Resi" required>
-                                            @else
-                                                <input class="form-control" type="text" name="resi" value="{{ $detail_pesananPelanggan->resi }}" id="resi" placeholder="Input Nomor Resi">
-                                            @endif
-                                    </li>
-                                    <div class="card-footer" style="padding: 0rem 1.0rem;">
-                                        @if($detail_pesananPelanggan->status_pesanan == "Terkirim")
-                                        @else
-                                        <button type="submit" class="btn btn-primary btn-block btn-xs">
-                                            <b>Ubah Status Pesanan</b>
-                                        </button>
+
+                    <div class="card card-pricing">
+                        <form action="{{ route('StatusPesananLogs') }}" method="POST">
+                            @csrf
+                            <ul class="specification-list">
+                                <li>
+                                    <input type="hidden" name="pesanan_id" value="{{ $detail_pesananPelanggan->id }}">
+                                    <select name="pesanan_status" id="pesanan_status" class="form-control">
+                                        <option value="#" selected disabled> -- Pilih Status --</option>
+                                        @if ($detail_pesananPelanggan->status_pesanan == "Pending")
+                                        <option value="Dikemas">Dikemas</option>
+                                        @elseif ($detail_pesananPelanggan->status_pesanan == "Dikemas")
+                                        <option value="Dikirim">Dikirim</option>
+                                        @elseif($detail_pesananPelanggan->status_pesanan == "Dikirim")
+                                        <option value="Terkirim">Terkirim</option>
+                                        @elseif($detail_pesananPelanggan->status_pesanan == "Terkirim")
+                                        <option value="#" selected disabled> -- Selesai --</option>
                                         @endif
-                                        <div>
-                                </ul>
-                            </form>
-                        </div>
+                                    </select>
+                                    <hr>
+                                    @if ($detail_pesananPelanggan->status_pesanan == "Dikemas")
+                                    <input class="form-control" type="text" name="resi" id="resi"
+                                        placeholder="Input Nomor Resi" required>
+                                    @else
+                                    <input class="form-control" type="text" name="resi"
+                                        value="{{ $detail_pesananPelanggan->resi }}" id="resi"
+                                        placeholder="Input Nomor Resi">
+                                    @endif
+                                </li>
+                                <div class="card-footer" style="padding: 0rem 1.0rem;">
+                                    @if($detail_pesananPelanggan->status_pesanan == "Terkirim")
+                                    @else
+                                    <button type="submit" class="btn btn-primary btn-block btn-xs">
+                                        <b>Ubah Status Pesanan</b>
+                                    </button>
+                                    @endif
+                                    <div>
+                            </ul>
+                        </form>
+                    </div>
                     @endif
                     <div class="table-responsive">
                         <table id="produk_pesanan" class="display table table-striped table-hover">
