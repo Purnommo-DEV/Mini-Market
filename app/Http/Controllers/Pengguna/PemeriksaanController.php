@@ -66,7 +66,6 @@ class PemeriksaanController extends Controller
         $pesanan->total_berat = $total_berat;
         $pesanan->ongkos_kirim = $request->ongkos_kirim;
         $pesanan->total_bayar = $total_bayar;
-        $pesanan->ongkos_kirim  = $request->ongkos_kirim;
         $pesanan->metode_pembayaran = "TransferBank";
         $pesanan->status_pesanan = "Pending";
         $pesanan->save();

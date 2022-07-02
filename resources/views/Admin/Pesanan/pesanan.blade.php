@@ -68,13 +68,19 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @php
+                                            $total_bayar = 0;
+                                        @endphp
                                         @foreach ($pesananPelanggan as $pesananPelanggans)
                                             <tr>
                                                 <td>{{$pesananPelanggans->id}}</td>
                                                 <td>{{$pesananPelanggans->user->name}}</td>
                                                 <td>{{$pesananPelanggans->user->alamat}}, {{$pesananPelanggans->user->kota->nama}}, 
                                                     {{$pesananPelanggans->user->provinsi->nama}}</td>
-                                                <td>@currency($pesananPelanggans->total_bayar)</td>
+                                            @php
+                                                $total_bayar = $pesananPelanggans->total_bayar + $pesananPelanggans->ongkos_kirim 
+                                            @endphp
+                                                <td>@currency($total_bayar)</td>
                                                 <td>{{$pesananPelanggans->metode_pembayaran}}</td>
                                                 <td>{{$pesananPelanggans->status_pesanan}}</td>
                                                 <td>
